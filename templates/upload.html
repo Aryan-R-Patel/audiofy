@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" id="file" name="file" required>
+    <button type="submit" class="btn btn-primary btn-lg">Convert</button>
+</form>
+
+{% endblock %}

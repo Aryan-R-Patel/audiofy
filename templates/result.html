@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1>Your Audio is Ready!</h1>
+
+    <audio controls>
+        <source src="../static/audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <p>
+        <a href="../static/audio.mp3" download="your_audio.mp3">
+            Download MP3
+        </a>
+    </p>
+
+    <h1>Summary</h1>
+    <p>{{ summary }}</p>
+
+{% endblock %}
