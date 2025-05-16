@@ -2,9 +2,31 @@
 
 {% block body %}
 
-<form action="/upload" method="POST" enctype="multipart/form-data">
-    <input type="file" id="file" name="file" required>
-    <button type="submit" class="btn btn-primary btn-lg">Convert</button>
-</form>
+<!-- Grid Layout -->
+<div class="container text-center">
+    <h1>Upload a PDF or paste text</h1>
+    <div class="row">
+        <!-- Upload File Column -->
+        <div class="col">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="fileInput" name="fileInput" accept=".pdf" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Convert PDF</button>
+            </form>
+        </div>
+
+        <!-- Text Paste Column -->
+        <div class="col">
+            <form action="/upload" method="POST">
+                <div class="mb-3">
+                    <textarea class="form-control" name="textInput" id="textInput" rows="7" placeholder="Paste the text to convert here..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg">Convert Text</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
