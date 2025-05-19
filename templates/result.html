@@ -2,16 +2,32 @@
 
 {% block body %}
 
-<h1>Your Audio is Ready!</h1>
-<audio controls>
-    <source src="/audio/{{ audio_id }}" type="audio/mpeg">
-</audio>
+<div class="container my-5">
+    <!-- Audio -->
+    <div class="text-center mb-5">
+        <h1>Your Audio is Ready!</h1>
 
-<a href="/audio/{{ audio_id }}" download="your_audio.mp3">
-    Download MP3
-</a>
+        <div class="my-3">
+            <audio controls class="w-50">
+                <source src="/audio/{{ audio_id }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
 
-<h1>Summary</h1>
-<p>{{ summary }}</p>
+        <a href="/audio/{{ audio_id }}" download="my_audio.mp3" class="btn btn-primary">
+            Download MP3
+        </a>
+    </div>
+
+    <!-- Summary -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Summary</h2>
+        </div>
+        <div class="card-body">
+            <p>{{ summary }}</p>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
