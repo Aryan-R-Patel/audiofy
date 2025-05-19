@@ -1,10 +1,12 @@
 import os
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, Response
 from flask_session import Session
 from PyPDF2 import PdfReader
 from gtts import gTTS
 from google import genai
 from dotenv import load_dotenv
+from database import initialize_database, save_to_database, get_audio_from_database
+from io import BytesIO
 
 load_dotenv()  # load the environment variables
 
@@ -14,6 +16,9 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# intial setup for database
+initialize_database()
 
 @app.route("/")
 def index():
@@ -50,7 +55,12 @@ def upload():
     
     # convert text to audio
     audio = gTTS(text_content, lang="en")
-    audio.save("static/audio.mp3")
+    buffer = BytesIO()
+    audio.write_to_fp(buffer)
+    bytes = buffer.getvalue()
+
+    # storing into the database
+    audio_id = save_to_database(bytes)  
     
     # generate summary using gemini
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -60,17 +70,27 @@ def upload():
         contents=[text_content, os.getenv("PROMPT")],
     )
 
-    # store the response in a session and redirect the user to result page
+    # store the response and file_id in a session and redirect the user to result page
     session["summary"] = response.text
+    session["audio_id"] = audio_id
     return redirect("/result")
     
 
 @app.route("/result")
 def result():
     summary = session["summary"]
-    return render_template("result.html", summary=summary)
+    audio_id = session["audio_id"]
+    return render_template("result.html", summary=summary, audio_id=audio_id)
 
 
 @app.route("/error")
 def error():
     return render_template("error.html")
+
+
+@app.route("/audio/<int:audio_id>")
+def get_audio(audio_id):
+    audio_bytes = get_audio_from_database(audio_id)
+    if audio_bytes:
+        return Response(audio_bytes, mimetype="audio/mpeg")
+    return redirect("/error")
